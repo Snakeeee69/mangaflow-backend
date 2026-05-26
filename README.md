@@ -50,7 +50,7 @@ El proyecto está compuesto por 10 microservicios independientes. Cada servicio 
 
 | Microservicio | Puerto | Responsabilidad |
 
-|---|---:|---|
+|----------------------------------------------
 
 | personas-service | 8081 | Gestión de personas y roles de usuario |
 
