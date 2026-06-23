@@ -1,5 +1,7 @@
 package com.mangaflow.personas.service;
 
+import com.mangaflow.personas.dto.PersonaRequest;
+import com.mangaflow.personas.dto.PersonaResponse;
 import com.mangaflow.personas.model.Persona;
 import com.mangaflow.personas.model.Rol;
 import com.mangaflow.personas.repository.PersonaRepository;
@@ -16,64 +18,94 @@ public class PersonaService {
         this.personaRepository = personaRepository;
     }
 
-    public List<Persona> listarTodas() {
-        return personaRepository.findAll();
+    public List<PersonaResponse> listarTodas() {
+        return personaRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public List<Persona> listarActivas() {
-        return personaRepository.findByActivoTrue();
+    public List<PersonaResponse> listarActivas() {
+        return personaRepository.findByActivoTrue()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-    public Persona buscarPorId(Long id) {
-        return personaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe una persona con el ID: " + id));
+    public PersonaResponse buscarPorId(Long id) {
+        return toResponse(obtenerPersona(id));
     }
 
-    public Persona crear(Persona persona) {
-        if (personaRepository.existsByCorreo(persona.getCorreo())) {
-            throw new RuntimeException("Ya existe una persona registrada con ese correo");
+    public PersonaResponse crear(PersonaRequest request) {
+        if (personaRepository.existsByCorreo(request.getCorreo())) {
+            throw new IllegalArgumentException("Ya existe una persona registrada con ese correo");
         }
 
-        if (persona.getActivo() == null) {
-            persona.setActivo(true);
-        }
+        Persona persona = Persona.builder()
+                .nombre(request.getNombre())
+                .correo(request.getCorreo())
+                .telefono(request.getTelefono())
+                .direccion(request.getDireccion())
+                .rol(request.getRol())
+                .activo(request.getActivo() == null ? true : request.getActivo())
+                .build();
 
-        return personaRepository.save(persona);
+        return toResponse(personaRepository.save(persona));
     }
 
-    public Persona actualizar(Long id, Persona datosNuevos) {
-        Persona persona = buscarPorId(id);
+    public PersonaResponse actualizar(Long id, PersonaRequest request) {
+        Persona persona = obtenerPersona(id);
 
-        if (!persona.getCorreo().equals(datosNuevos.getCorreo())
-                && personaRepository.existsByCorreo(datosNuevos.getCorreo())) {
-            throw new RuntimeException("El correo ya está en uso por otra persona");
+        if (!persona.getCorreo().equals(request.getCorreo())
+                && personaRepository.existsByCorreo(request.getCorreo())) {
+            throw new IllegalArgumentException("El correo ya está en uso por otra persona");
         }
 
-        persona.setNombre(datosNuevos.getNombre());
-        persona.setCorreo(datosNuevos.getCorreo());
-        persona.setTelefono(datosNuevos.getTelefono());
-        persona.setDireccion(datosNuevos.getDireccion());
-        persona.setRol(datosNuevos.getRol());
+        persona.setNombre(request.getNombre());
+        persona.setCorreo(request.getCorreo());
+        persona.setTelefono(request.getTelefono());
+        persona.setDireccion(request.getDireccion());
+        persona.setRol(request.getRol());
 
-        return personaRepository.save(persona);
+        return toResponse(personaRepository.save(persona));
     }
 
     public void eliminar(Long id) {
-        Persona persona = buscarPorId(id);
+        Persona persona = obtenerPersona(id);
         personaRepository.delete(persona);
     }
 
-    public Persona desactivar(Long id) {
-        Persona persona = buscarPorId(id);
+    public PersonaResponse desactivar(Long id) {
+        Persona persona = obtenerPersona(id);
         persona.setActivo(false);
-        return personaRepository.save(persona);
+        return toResponse(personaRepository.save(persona));
     }
 
-    public List<Persona> buscarPorRol(Rol rol) {
-        return personaRepository.findByRol(rol);
+    public List<PersonaResponse> buscarPorRol(Rol rol) {
+        return personaRepository.findByRol(rol)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     public boolean existePersona(Long id) {
         return personaRepository.existsById(id);
+    }
+
+    private Persona obtenerPersona(Long id) {
+        return personaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No existe una persona con el ID: " + id));
+    }
+
+    private PersonaResponse toResponse(Persona persona) {
+        return PersonaResponse.builder()
+                .id(persona.getId())
+                .nombre(persona.getNombre())
+                .correo(persona.getCorreo())
+                .telefono(persona.getTelefono())
+                .direccion(persona.getDireccion())
+                .rol(persona.getRol())
+                .activo(persona.getActivo())
+                .build();
     }
 }

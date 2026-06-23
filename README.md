@@ -117,4 +117,57 @@ Cada microservicio debe ejecutarse desde su propia carpeta:
 cd nombre-del-servicio
 
 .\\mvnw.cmd spring-boot:run
+```
+
+
+
+\## Service Discovery (Eureka)
+
+
+
+El proyecto incluye un servidor de registro Eureka (`eureka-server`, puerto 8761). Debe iniciarse antes que los microservicios para que estos se registren automáticamente.
+
+
+
+```powershell
+
+cd eureka-server
+
+.\\mvnw.cmd spring-boot:run
+```
+
+
+
+Panel de Eureka: http://localhost:8761
+
+
+
+\## Documentación de la API (Swagger)
+
+
+
+Cada microservicio expone su documentación interactiva con springdoc-openapi:
+
+
+
+\- Swagger UI: `http://localhost:{puerto}/swagger-ui.html`
+
+\- OpenAPI JSON: `http://localhost:{puerto}/v3/api-docs`
+
+
+
+\## Pruebas
+
+
+
+Cada microservicio incluye pruebas unitarias con JUnit 5 y Mockito. Para ejecutarlas:
+
+
+
+```powershell
+
+cd nombre-del-servicio
+
+.\\mvnw.cmd test
+```
 
