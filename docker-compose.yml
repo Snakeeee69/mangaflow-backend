@@ -1,0 +1,191 @@
+version: '3.8'
+
+services:
+
+  frontend:
+    build:
+      context: ../MangaFlow-Frontend
+      args:
+        VITE_API_URL: http://localhost:8090
+    container_name: mangaflow-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+      
+  eureka-server:
+    build: ./eureka-server
+    container_name: mangaflow-eureka
+    ports:
+      - "8761:8761"
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: mangaflow-gateway
+    ports:
+      - "8090:8090"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  personas-service:
+    build: ./personas-service
+    container_name: mangaflow-personas
+    ports:
+      - "8081:8081"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_personas_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  auth-service:
+    build: ./auth-service
+    container_name: mangaflow-auth
+    ports:
+      - "8091:8091"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_auth_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - PERSONAS_SERVICE_URL=http://personas-service:8081
+
+  catalogo-service:
+    build: ./catalogo-service
+    container_name: mangaflow-catalogo
+    ports:
+      - "8083:8083"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_catalogo_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  inventario-service:
+    build: ./inventario-service
+    container_name: mangaflow-inventario
+    ports:
+      - "8084:8084"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_inventario_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  pedidos-service:
+    build: ./pedidos-service
+    container_name: mangaflow-pedidos
+    ports:
+      - "8085:8085"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_pedidos_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  pagos-service:
+    build: ./pagos-service
+    container_name: mangaflow-pagos
+    ports:
+      - "8086:8086"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_pagos_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  puntos-service:
+    build: ./puntos-service
+    container_name: mangaflow-puntos
+    ports:
+      - "8087:8087"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_puntos_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  descuentos-service:
+    build: ./descuentos-service
+    container_name: mangaflow-descuentos
+    ports:
+      - "8088:8088"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_descuentos_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  notificaciones-service:
+    build: ./notificaciones-service
+    container_name: mangaflow-notificaciones
+    ports:
+      - "8089:8089"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_notificaciones_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  reportes-service:
+    build: ./reportes-service
+    container_name: mangaflow-reportes
+    ports:
+      - "8092:8092"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/mangaflow_reportes_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
