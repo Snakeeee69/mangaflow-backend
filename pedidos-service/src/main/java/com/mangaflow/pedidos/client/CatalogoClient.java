@@ -1,17 +1,16 @@
 package com.mangaflow.pedidos.client;
 
-
-import org.springframework.web.reactive.function.client.WebClient;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 public class CatalogoClient {
 
     private final WebClient webClient;
 
-    public CatalogoClient() {
-        this.webClient = WebClient.create("http://localhost:8083");
+    public CatalogoClient(@Value("${servicios.catalogo.url:http://catalogo-service:8083}") String baseUrl) {
+        this.webClient = WebClient.create(baseUrl);
     }
 
     public boolean existeManga(Long mangaId) {
@@ -24,6 +23,7 @@ public class CatalogoClient {
 
             return Boolean.TRUE.equals(existe);
         } catch (Exception e) {
+            System.err.println("Error al consultar catalogo-service: " + e.getMessage());
             return false;
         }
     }

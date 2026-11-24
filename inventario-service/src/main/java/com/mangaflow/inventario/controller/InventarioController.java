@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/mangas/inventario")
 @Tag(name = "Inventario Controller", description = "Endpoints de control de almacén, reabastecimiento y auditoría de stock")

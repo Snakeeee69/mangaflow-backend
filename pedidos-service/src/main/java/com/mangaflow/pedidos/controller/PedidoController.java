@@ -1,6 +1,5 @@
 package com.mangaflow.pedidos.controller;
 
-import com.mangaflow.pedidos.client.AuthClient;
 import com.mangaflow.pedidos.dto.PedidoRequest;
 import com.mangaflow.pedidos.dto.PedidoResponse;
 import com.mangaflow.pedidos.service.PedidoService;
@@ -16,11 +15,9 @@ import java.util.List;
 public class PedidoController {
 
     private final PedidoService pedidoService;
-    private final AuthClient authClient;
 
-    public PedidoController(PedidoService pedidoService, AuthClient authClient) {
+    public PedidoController(PedidoService pedidoService) {
         this.pedidoService = pedidoService;
-        this.authClient = authClient;
     }
 
     @GetMapping
@@ -44,12 +41,7 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody PedidoRequest request) {
-        boolean existeUsuario = authClient.existeUsuario(request.getPersonaId());
-        if (!existeUsuario) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("El usuario con ID " + request.getPersonaId() + " no existe");
-        }
+    public ResponseEntity<PedidoResponse> crear(@Valid @RequestBody PedidoRequest request) {
         PedidoResponse response = pedidoService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
