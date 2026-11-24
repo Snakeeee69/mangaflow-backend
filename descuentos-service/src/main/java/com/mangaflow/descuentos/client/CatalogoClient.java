@@ -1,5 +1,6 @@
 package com.mangaflow.descuentos.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -8,8 +9,8 @@ public class CatalogoClient {
 
     private final WebClient webClient;
 
-    public CatalogoClient() {
-        this.webClient = WebClient.create("http://localhost:8083");
+    public CatalogoClient(@Value("${catalogo.service.url:http://catalogo-service:8083}") String catalogoServiceUrl) {
+        this.webClient = WebClient.create(catalogoServiceUrl);
     }
 
     public boolean existeManga(Long mangaId) {
