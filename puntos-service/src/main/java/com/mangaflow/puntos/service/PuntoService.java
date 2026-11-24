@@ -2,6 +2,7 @@ package com.mangaflow.puntos.service;
 
 import com.mangaflow.puntos.client.PagosClient;
 import com.mangaflow.puntos.client.PersonasClient;
+import com.mangaflow.puntos.dto.AcreditarPuntosRequest;
 import com.mangaflow.puntos.dto.AcumularPuntosRequest;
 import com.mangaflow.puntos.dto.CanjearPuntosRequest;
 import com.mangaflow.puntos.dto.CuentaPuntosResponse;
@@ -93,6 +94,32 @@ public class PuntoService {
                 .tipoMovimiento(TipoMovimiento.GANANCIA_COMPRA)
                 .puntos(puntosGanados)
                 .descripcion("Puntos acumulados por compra aprobada")
+                .fechaMovimiento(LocalDateTime.now())
+                .build();
+
+        movimientoRepository.save(movimiento);
+
+        return toCuentaResponse(cuenta);
+    }
+
+    public CuentaPuntosResponse acreditarPuntos(AcreditarPuntosRequest request) {
+
+        if (!personasClient.existePersona(request.getPersonaId())) {
+            throw new IllegalArgumentException("No se pueden acreditar puntos: la persona no existe");
+        }
+
+        CuentaPuntos cuenta = cuentaRepository.findByPersonaId(request.getPersonaId())
+                .orElseGet(() -> crearCuenta(request.getPersonaId()));
+
+        cuenta.setSaldo(cuenta.getSaldo() + request.getPuntos());
+        cuentaRepository.save(cuenta);
+
+        MovimientoPuntos movimiento = MovimientoPuntos.builder()
+                .personaId(request.getPersonaId())
+                .pagoId(null)
+                .tipoMovimiento(TipoMovimiento.AJUSTE_ADMIN)
+                .puntos(request.getPuntos())
+                .descripcion(request.getDescripcion())
                 .fechaMovimiento(LocalDateTime.now())
                 .build();
 

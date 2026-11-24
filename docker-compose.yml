@@ -144,6 +144,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - PAGOS_SERVICE_URL=http://pagos-service:8086
+      - PERSONAS_SERVICE_URL=http://personas-service:8081
 
   descuentos-service:
     build: ./descuentos-service

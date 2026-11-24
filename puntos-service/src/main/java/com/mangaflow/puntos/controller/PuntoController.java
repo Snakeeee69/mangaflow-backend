@@ -1,5 +1,6 @@
 package com.mangaflow.puntos.controller;
 
+import com.mangaflow.puntos.dto.AcreditarPuntosRequest;
 import com.mangaflow.puntos.dto.AcumularPuntosRequest;
 import com.mangaflow.puntos.dto.CanjearPuntosRequest;
 import com.mangaflow.puntos.dto.CuentaPuntosResponse;
@@ -45,6 +46,12 @@ public class PuntoController {
     @PostMapping("/acumular")
     public ResponseEntity<CuentaPuntosResponse> acumularPuntos(@Valid @RequestBody AcumularPuntosRequest request) {
         CuentaPuntosResponse response = puntoService.acumularPuntos(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/acreditar")
+    public ResponseEntity<CuentaPuntosResponse> acreditarPuntos(@Valid @RequestBody AcreditarPuntosRequest request) {
+        CuentaPuntosResponse response = puntoService.acreditarPuntos(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

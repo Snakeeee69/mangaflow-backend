@@ -1,15 +1,16 @@
 package com.mangaflow.puntos.client;
 
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 public class PersonasClient {
 
     private final WebClient webClient;
 
-    public PersonasClient() {
-        this.webClient = WebClient.create("http://localhost:8081");
+    public PersonasClient(@Value("${personas.service.url:http://personas-service:8081}") String personasServiceUrl) {
+        this.webClient = WebClient.create(personasServiceUrl);
     }
 
     public boolean existePersona(Long personaId) {

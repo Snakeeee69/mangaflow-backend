@@ -2,6 +2,7 @@ package com.mangaflow.puntos.client;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -10,8 +11,8 @@ public class PagosClient {
 
     private final WebClient webClient;
 
-    public PagosClient() {
-        this.webClient = WebClient.create("http://localhost:8086");
+    public PagosClient(@Value("${pagos.service.url:http://pagos-service:8086}") String pagosServiceUrl) {
+        this.webClient = WebClient.create(pagosServiceUrl);
     }
 
     public boolean existePago(Long pagoId) {
