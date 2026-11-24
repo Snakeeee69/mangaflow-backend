@@ -20,17 +20,20 @@ public class AuthService {
     private final PersonasClient personasClient;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     public AuthService(
             CredencialRepository credencialRepository,
             PersonasClient personasClient,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService
+            JwtService jwtService,
+            EmailService emailService
     ) {
         this.credencialRepository = credencialRepository;
         this.personasClient = personasClient;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
     public AuthResponse registrar(RegistroAuthRequest request) {
@@ -68,6 +71,11 @@ public class AuthService {
         credencialRepository.save(credencial);
 
         String token = jwtService.generarToken(credencial);
+
+        emailService.enviarAlertaLogin(
+                credencial.getCorreo(),
+                String.valueOf(credencial.getRol())
+        );
 
         return LoginResponse.builder()
                 .personaId(credencial.getPersonaId())
