@@ -57,6 +57,9 @@ public class GatewaySecurityConfig {
                 .route("puntos-service", r -> r
                         .path("/mangas/puntos", "/mangas/puntos/**")
                         .uri("lb://puntos-service"))
+                .route("descuentos-service", r -> r
+                        .path("/mangas/descuentos", "/mangas/descuentos/**")
+                        .uri("lb://descuentos-service"))
                 .build();
     }
 
@@ -66,7 +69,9 @@ public class GatewaySecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
+                "http://localhost:5174",
                 "http://127.0.0.1:5173",
+                "http://127.0.0.1:5174",
                 "http://localhost:3000"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -92,7 +97,7 @@ public class GatewaySecurityConfig {
 
             String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return responderError(exchange, HttpStatus.UNAUTHORIZED, "Token JWT faltante o inválido");
+                return responderError(exchange, HttpStatus.UNAUTHORIZED, "Token JWT faltante o invalido");
             }
 
             String token = authHeader.substring(7);
@@ -126,7 +131,9 @@ public class GatewaySecurityConfig {
     }
 
     private boolean esRutaPublica(String path, HttpMethod method) {
-        if (path.equals("/mangas/auth/login") || path.equals("/mangas/auth/registrar")) {
+        if (path.equals("/mangas/auth/login")
+                || path.equals("/mangas/auth/registrar")
+                || path.equals("/mangas/auth/register")) {
             return true;
         }
         if (path.equals("/mangas/personas") && method == HttpMethod.POST) {
@@ -145,7 +152,10 @@ public class GatewaySecurityConfig {
     }
 
     private boolean requiereRolAdminOStaff(String path, HttpMethod method) {
-        if (path.startsWith("/mangas/auth") && !path.equals("/mangas/auth/login") && !path.equals("/mangas/auth/registrar")) {
+        if (path.startsWith("/mangas/auth")
+                && !path.equals("/mangas/auth/login")
+                && !path.equals("/mangas/auth/registrar")
+                && !path.equals("/mangas/auth/register")) {
             return true;
         }
         if (path.startsWith("/mangas/personas") && method == HttpMethod.DELETE) {
@@ -162,3 +172,4 @@ public class GatewaySecurityConfig {
         return exchange.getResponse().writeWith(Mono.just(buffer));
     }
 }
+
