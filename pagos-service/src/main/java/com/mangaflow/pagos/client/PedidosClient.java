@@ -1,5 +1,6 @@
 package com.mangaflow.pagos.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -8,8 +9,8 @@ public class PedidosClient {
 
     private final WebClient webClient;
 
-    public PedidosClient() {
-        this.webClient = WebClient.create("http://pedidos-service");
+    public PedidosClient(@Value("${pedidos.service.url:http://pedidos-service:8085}") String pedidosServiceUrl) {
+        this.webClient = WebClient.create(pedidosServiceUrl);
     }
 
     public boolean existePedido(Long pedidoId) {

@@ -45,9 +45,18 @@ public class GatewaySecurityConfig {
                 .route("catalogo-service", r -> r
                         .path("/mangas/catalogo", "/mangas/catalogo/**")
                         .uri("lb://catalogo-service"))
+                .route("inventario-service", r -> r
+                        .path("/mangas/inventario", "/mangas/inventario/**")
+                        .uri("lb://inventario-service"))
                 .route("pedidos-service", r -> r
                         .path("/mangas/pedidos", "/mangas/pedidos/**")
                         .uri("lb://pedidos-service"))
+                .route("pagos-service", r -> r
+                        .path("/mangas/pagos", "/mangas/pagos/**")
+                        .uri("lb://pagos-service"))
+                .route("puntos-service", r -> r
+                        .path("/mangas/puntos", "/mangas/puntos/**")
+                        .uri("lb://puntos-service"))
                 .build();
     }
 
@@ -127,6 +136,9 @@ public class GatewaySecurityConfig {
             return true;
         }
         if (path.startsWith("/mangas/catalogo") && method == HttpMethod.GET) {
+            return true;
+        }
+        if (path.startsWith("/mangas/inventario") && method == HttpMethod.GET) {
             return true;
         }
         return path.contains("/v3/api-docs") || path.contains("/swagger-ui");
