@@ -53,6 +53,11 @@ public class MangaService {
                 .precioFisico(request.getPrecioFisico())
                 .precioDigital(request.getPrecioDigital())
                 .formato(request.getFormato())
+                .imagen(request.getImagen() != null && !request.getImagen().isBlank()
+                        ? request.getImagen()
+                        : "/images/logo/logoMangaFlow.png")
+                .stock(request.getStock() != null ? request.getStock() : 10)
+                .proximamenteFisico(Boolean.TRUE.equals(request.getProximamenteFisico()))
                 .activo(true)
                 .build();
 
@@ -71,6 +76,15 @@ public class MangaService {
         manga.setPrecioFisico(request.getPrecioFisico());
         manga.setPrecioDigital(request.getPrecioDigital());
         manga.setFormato(request.getFormato());
+        if (request.getImagen() != null && !request.getImagen().isBlank()) {
+            manga.setImagen(request.getImagen());
+        }
+        if (request.getStock() != null) {
+            manga.setStock(request.getStock());
+        }
+        if (request.getProximamenteFisico() != null) {
+            manga.setProximamenteFisico(request.getProximamenteFisico());
+        }
 
         return mapToResponse(mangaRepository.save(manga));
     }
@@ -83,6 +97,12 @@ public class MangaService {
     public MangaResponse desactivar(Long id) {
         Manga manga = buscarPorIdEntity(id);
         manga.setActivo(false);
+        return mapToResponse(mangaRepository.save(manga));
+    }
+
+    public MangaResponse activar(Long id) {
+        Manga manga = buscarPorIdEntity(id);
+        manga.setActivo(true);
         return mapToResponse(mangaRepository.save(manga));
     }
 
@@ -119,6 +139,9 @@ public class MangaService {
                 .precioFisico(manga.getPrecioFisico())
                 .precioDigital(manga.getPrecioDigital())
                 .formato(manga.getFormato())
+                .imagen(manga.getImagen())
+                .stock(manga.getStock())
+                .proximamenteFisico(manga.getProximamenteFisico())
                 .activo(manga.getActivo())
                 .build();
     }

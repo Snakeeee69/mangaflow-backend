@@ -42,4 +42,8 @@ public class MangaRequest {
 
     @NotNull(message = "El formato es obligatorio")
     private FormatoManga formato;
+
+    private String imagen;
+    private Integer stock;
+    private Boolean proximamenteFisico;
 }

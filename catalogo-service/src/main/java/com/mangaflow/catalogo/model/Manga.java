@@ -64,4 +64,15 @@ public class Manga {
     @Builder.Default
     @Column(nullable = false)
     private Boolean activo = true;
+
+    @Column(length = 500)
+    private String imagen;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer stock = 10;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean proximamenteFisico = false;
 }

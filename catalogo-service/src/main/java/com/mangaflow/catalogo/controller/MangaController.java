@@ -33,7 +33,7 @@ public class MangaController {
     }
 
     @GetMapping("/activos")
-    @Operation(summary = "Listar mangas activos", description = "Retorna nicamente aquellos mangas que están marcados como activos y listos para la venta/visualización en el catálogo público.")
+    @Operation(summary = "Listar mangas activos", description = "Retorna únicamente aquellos mangas que están marcados como activos y listos para la venta/visualización en el catálogo público.")
     public ResponseEntity<List<MangaResponse>> listarActivos() {
         return ResponseEntity.ok(mangaService.listarActivos());
     }
@@ -81,6 +81,13 @@ public class MangaController {
     public ResponseEntity<MangaResponse> desactivar(
             @Parameter(description = "ID del manga a dar de baja lógicamente", example = "1") @PathVariable Long id) {
         return ResponseEntity.ok(mangaService.desactivar(id));
+    }
+
+    @PutMapping("/{id}/activar")
+    @Operation(summary = "Reactivar un manga", description = "Cambia el estado de disponibilidad del manga a 'activo' (true) para volver a mostrarlo en el catálogo público.")
+    public ResponseEntity<MangaResponse> activar(
+            @Parameter(description = "ID del manga a reactivar", example = "1") @PathVariable Long id) {
+        return ResponseEntity.ok(mangaService.activar(id));
     }
 
     @GetMapping("/buscar/titulo")

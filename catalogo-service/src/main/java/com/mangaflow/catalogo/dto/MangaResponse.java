@@ -20,5 +20,8 @@ public class MangaResponse {
     private Double precioFisico;
     private Double precioDigital;
     private FormatoManga formato;
+    private String imagen;
+    private Integer stock;
+    private Boolean proximamenteFisico;
     private Boolean activo;
 }
